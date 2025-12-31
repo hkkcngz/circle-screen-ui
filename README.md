@@ -1,79 +1,122 @@
-# circle-screen-ui
-Raspberry pi 4 and Waveshare 5inch_1080x1080_LCD office lights controller. 
+Haklısın, tarayıcı arayüzündeki stilizasyon bazen kopyalamayı veya dosya yapısını korumayı zorlaştırabiliyor.
 
+İstediğin **README.md** dosyasını doğrudan kopyalayıp bir metin editörüne (Notepad gibi) yapıştırabileceğin, hiçbir ekstra stil içermeyen **kod bloğu** içinde sunuyorum. Bu bloğun sağ üstündeki "kopyala" ikonuna basarak temiz bir şekilde alabilirsin.
 
-## Prepare
-###  1. Install Raspberry Pi OS Lite 64Bit with Raspberry Pi Imager,
+```markdown
+# 📊 circle-screen-ui
+Raspberry Pi 4 and Waveshare 5inch_1080x1080_LCD office lights controller.
 
-  - EDIT SETTINGS (Edit Settings - Gear icon in the bottom right):
-  - General Tab:
-  - Hostname: kodmobpi (remember this).
-  - Set username and password: Use 'pi' as your username and something easy to use as your password (e.g., 1234).
-  - Configure Wireless LAN: Enter your Wi-Fi name and password, checking them carefully. (Pay attention to uppercase/lowercase letters!).
-  - Wireless LAN country: Set to TR.
-  - Services Tab:
-  - Check the "Enable SSH" box and select "Use password authentication".
-  - Click the SAVE and WRITE buttons.
+This project transforms a Raspberry Pi 4 with a round Waveshare display into a dedicated, high-performance office controller. It uses a minimal Linux setup (Kiosk Mode) to boot directly into a web-based UI without showing the desktop environment.
 
-###  2. Edit config.txt from PC, 
+---
 
-  ``# Temel Görüntü Ayarları
+## 🛠 Preparation
+
+### 1. Operating System Setup
+Use [Raspberry Pi Imager](https://www.raspberrypi.com/software/) to install **Raspberry Pi OS Lite (64-bit)**. 
+
+Before writing, click the **Edit Settings (Gear icon)**:
+* **Hostname:** `kodmobpi`
+* **Username/Password:** `pi` / `1234`
+* **Wi-Fi:** Configure your SSID and password (select `TR` as country).
+* **Services:** Enable **SSH** with password authentication.
+* **Save** and **Write** to the SD card.
+
+### 2. Display Configuration (config.txt)
+After the programming is completed, open the `config.txt` file in the root directory of the SD card. Add the following code at the end of the file.
+
+> **Important:** You must disable the default graphics driver to use custom HDMI timings on Pi 4.
+
+```text
+# --- Basic Display Settings ---
 hdmi_force_hotplug=1
 config_hdmi_boost=10
 hdmi_group=2
 hdmi_mode=87
 
-# Senin Ekranının Özel Zamanlaması
+# --- Waveshare 5" Round LCD Timings (1080x1080) ---
 hdmi_timings=1080 0 68 32 100 1080 0 12 4 16 0 0 0 60 0 85500000 0
 
-# Pi 4 için Grafik Sürücüsünü Devre Dışı Bırak (Bu çok önemli!)
-# dtoverlay=vc4-kms-v3d  <-- Bu satırı sildik veya yorum yaptık
-# display_auto_detect=1 <-- Bunu da sildik
+# --- Disable Default KMS Driver (Mandatory for Pi 4) ---
+# dtoverlay=vc4-kms-v3d
+# display_auto_detect=1
 
-# Ekranın akım çekebilmesi için
+# --- Power & Performance ---
 max_usb_current=1
 hdmi_drive=2
-
-# Diğer Zorunlu Ayarlar
 arm_64bit=1
-disable_overscan=1``
+disable_overscan=1
 
-### 3. Connect to Pi with Putty, IP Adress from modem dashboard. 
-Test to Bypass the "Socket Interaction" Message
-If you still see that message on the screen, it means the system is actually booting but cannot start the desktop. Connect via SSH and enter the following command:
+```
 
-``sudo raspi-config``
-In the menu that opens:
-  - Follow the path System Options -> Boot / Auto Login.
-  - Select the Desktop Autologin (or Console Autologin) option.
-  - Then go to Advanced Options -> GL Driver and make sure the Legacy option is selected.
+---
 
+## 🚀 Post-Boot Setup
 
-### 4. Install Chromium and Auto run app settings
-Connect to Pi via Putty
-``# 1. Sistem paket listesini güncelle ve gerekli araçları kur
+### 3. Bypass "Socket Interaction" Message
+
+If the screen hangs at boot logs, you need to enable **Auto-Login** and **Legacy Drivers**. Connect via SSH (Putty/Terminal):
+
+```bash
+sudo raspi-config
+
+```
+
+1. Navigate to **System Options** -> **Boot / Auto Login**.
+2. Select **Desktop Autologin** (or Console Autologin).
+3. Go to **Advanced Options** -> **GL Driver** and ensure **Legacy** is selected.
+4. Finish and Reboot.
+
+### 4. Install Kiosk Environment
+
+Run the following commands to install the minimal UI wrapper and Chromium browser:
+
+```bash
+# Update and install core packages
 sudo apt update
 sudo apt install -y --no-install-recommends xserver-xorg x11-xserver-utils xinit openbox chromium
 
-# 2. Grafik arayüzü başlatıldığında neyin çalışacağını belirleyen .xinitrc dosyasını oluştur
+# Create the Kiosk launch script
 cat <<EOF > ~/.xinitrc
-# Ekran koruyucuyu ve uyku modunu kapat
+# Disable screensaver and power management
 xset s off
 xset -dpms
 xset s noblank
 
-# Tarayıcıyı kiosk modunda (tam ekran) Google ile başlat
-exec chromium --kiosk --noerrdialogs --disable-infobars --check-for-update-interval=31536000 --disable-pinch https://www.google.com
+# Launch Chromium in Kiosk Mode
+# Replace the URL with your local file path (e.g., file:///home/pi/index.html)
+exec chromium --kiosk --noerrdialogs --disable-infobars --check-for-update-interval=31536000 --disable-pinch [https://www.google.com](https://www.google.com)
 EOF
 
-# 3. Kullanıcı giriş yaptığında (Login) grafik arayüzünün otomatik başlamasını sağla
-# Eğer satır zaten varsa tekrar eklememesi için kontrol eder
+# Enable auto-start on login
 if ! grep -q "startx" ~/.bash_profile; then
   echo 'if [ -z "$DISPLAY" ] && [ $(tty) = /dev/tty1 ]; then startx; fi' >> ~/.bash_profile
 fi
 
-# 4. Sistemi yeniden başlatarak kurulumu test et
-sudo reboot``
+sudo reboot
 
-- Change google.com with your own app adress
-Switching to Your Own Code: To open your own app file instead of Google's, simply replace https://www.google.com in the .xinitrc file with the location where you uploaded the file (e.g., file:///home/pi/index.html).
+```
+
+---
+
+## 📂 Deploying Your Application
+
+1. Transfer your `index.html` and assets to `/home/pi/` using WinSCP or FileZilla.
+2. Update the URL in `~/.xinitrc`:
+`exec chromium --kiosk file:///home/pi/index.html`
+3. Restart: `sudo reboot`
+
+## ⚠️ Notes
+
+* **Power:** Always use a **5.1V / 3A** power adapter. Laptop USB ports will trigger "Undervoltage" warnings and system instability.
+* **Port:** Use **HDMI-0** (the micro-HDMI port closest to the USB-C power input).
+
+## 🔗 References
+
+* **Official Wiki:** [Waveshare 5inch 1080x1080 LCD Guide](https://www.waveshare.com/wiki/5inch_1080x1080_LCD)
+
+```
+
+Bu dökümanı tamamladıktan sonra, ekranın dokunmatik kalibrasyonu veya CSS yerleşimi konusunda başka bir şeye ihtiyacın olursa buradayım. Başarılar!
+
+```
