@@ -111,8 +111,5 @@ sudo reboot
 
 * **Official Wiki:** [Waveshare 5inch 1080x1080 LCD Guide](https://www.waveshare.com/wiki/5inch_1080x1080_LCD)
 
-```
-
-Bu dökümanı tamamladıktan sonra, ekranın dokunmatik kalibrasyonu veya CSS yerleşimi konusunda başka bir şeye ihtiyacın olursa buradayım. Başarılar!
-
-```
+Hakkı Cengiz
+01.01.2026
