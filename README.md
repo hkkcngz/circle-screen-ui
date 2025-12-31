@@ -5,15 +5,15 @@ Raspberry pi 4 and Waveshare 5inch_1080x1080_LCD office lights controller.
 ## Prepare
 ###  1. Install Raspberry Pi OS Lite 64Bit with Raspberry Pi Imager,
 
-  EDIT SETTINGS (Edit Settings - Gear icon in the bottom right):
-  General Tab:
-  Hostname: kodmobpi (remember this).
-  Set username and password: Use 'pi' as your username and something easy to use as your password (e.g., 1234).
-  Configure Wireless LAN: Enter your Wi-Fi name and password, checking them carefully. (Pay attention to uppercase/lowercase letters!).
-  Wireless LAN country: Set to TR.
-  Services Tab:
-  Check the "Enable SSH" box and select "Use password authentication".
-  Click the SAVE and WRITE buttons.
+  - EDIT SETTINGS (Edit Settings - Gear icon in the bottom right):
+  - General Tab:
+  - Hostname: kodmobpi (remember this).
+  - Set username and password: Use 'pi' as your username and something easy to use as your password (e.g., 1234).
+  - Configure Wireless LAN: Enter your Wi-Fi name and password, checking them carefully. (Pay attention to uppercase/lowercase letters!).
+  - Wireless LAN country: Set to TR.
+  - Services Tab:
+  - Check the "Enable SSH" box and select "Use password authentication".
+  - Click the SAVE and WRITE buttons.
 
 ###  2. Edit config.txt from PC, 
 
