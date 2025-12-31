@@ -1,7 +1,3 @@
-Haklısın, tarayıcı arayüzündeki stilizasyon bazen kopyalamayı veya dosya yapısını korumayı zorlaştırabiliyor.
-
-İstediğin **README.md** dosyasını doğrudan kopyalayıp bir metin editörüne (Notepad gibi) yapıştırabileceğin, hiçbir ekstra stil içermeyen **kod bloğu** içinde sunuyorum. Bu bloğun sağ üstündeki "kopyala" ikonuna basarak temiz bir şekilde alabilirsin.
-
 ```markdown
 # 📊 circle-screen-ui
 Raspberry Pi 4 and Waveshare 5inch_1080x1080_LCD office lights controller.
